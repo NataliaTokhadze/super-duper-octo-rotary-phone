@@ -11,5 +11,7 @@ faker = Faker()
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        category = Category(name='toys')
-        category.save()
+        categories = Category.objects.all()
+        item_objects = Item.objects.all()[:5]
+        for category in categories:
+            category.items.add(*item_objects)
