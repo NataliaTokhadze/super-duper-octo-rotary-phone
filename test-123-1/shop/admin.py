@@ -17,13 +17,13 @@ class ItemInLine(admin.TabularInline):
 class ImageInLine(admin.StackedInline):
     model = Image
     extra = 1
-    fields = ('image')
+    fields = ('image',)
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'description']
     search_fields = ['name']
     ordering = ['name']
-    inlines = [ItemLine]
+    inlines = [ItemLine, ImageInLine]
     
     def get_queryset(self, request):
         existing_queryset = super().get_queryset(request)
@@ -39,15 +39,12 @@ class ItemAdmin(admin.ModelAdmin):
     fields = ['name', 'price', 'category', 'description']
     autocomplete_fields = ['category']
     list_filter = [PriceFilter]
-    inlines = [TagInLine]
+    inlines = [TagInLine, ImageInLine]
     
 class TagAdmin(admin.ModelAdmin):
     list_display = ['name']
     search_fields = ['name']
     inlines = [ItemInLine]
-
-class ImageAdmin(admin.ModelAdmin):
-    inlines = [ImageInLine]
     
 admin.site.register(Tag,TagAdmin)
 admin.site.register(Category, CategoryAdmin)
