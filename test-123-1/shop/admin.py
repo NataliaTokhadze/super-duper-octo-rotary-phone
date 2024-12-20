@@ -2,17 +2,11 @@ from django.contrib import admin
 from shop.models import Tag, Category, Item, Image
 from shop.filters import PriceFilter
 
-# class ItemLine(admin.TabularInline):
-#     model = Item
-#     extra = 1
-#     fields = ['name', 'price']
-    
-class ItemLine(admin.StackedInline):
+class ItemLine(admin.TabularInline):
     model = Item
     extra = 1
-    fields = ['name', 'price']
     
-class TagInLine(admin.TabularInline):
+class TagInLine(admin.StackedInline):
     model = Item.tags.through
     extra = 1
     
@@ -20,10 +14,15 @@ class ItemInLine(admin.TabularInline):
     model = Tag.items.through
     extra = 1
 
+class ImageInLine(admin.StackedInline):
+    model = Image
+    extra = 1
+    fields = ('image')
+
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'first_five_items']
-    search_fields = ['id', 'name']
-    ordering = ['id']
+    list_display = ['name', 'description']
+    search_fields = ['name']
+    ordering = ['name']
     inlines = [ItemLine]
     
     def get_queryset(self, request):
@@ -34,19 +33,21 @@ class CategoryAdmin(admin.ModelAdmin):
         return ", ".join(item.name for item in obj.items.all()[:5])
     
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'price']
-    search_fields = ['name']
-    ordering = ['price']
+    list_display = ['name', 'category', 'price', 'description']
+    search_fields = ['name', 'description']
+    ordering = ['-price']
     fields = ['name', 'price', 'category', 'description']
     autocomplete_fields = ['category']
     list_filter = [PriceFilter]
     inlines = [TagInLine]
     
 class TagAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name']
-    search_fields = ['id', 'name']
-    ordering = ['id']
+    list_display = ['name']
+    search_fields = ['name']
     inlines = [ItemInLine]
+
+class ImageAdmin(admin.ModelAdmin):
+    inlines = [ImageInLine]
     
 admin.site.register(Tag,TagAdmin)
 admin.site.register(Category, CategoryAdmin)

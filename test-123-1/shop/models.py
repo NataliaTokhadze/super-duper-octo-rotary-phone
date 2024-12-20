@@ -30,6 +30,5 @@ class Tag(models.Model):
 
 class Image(models.Model):
     url = models.URLField()
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    image = models.ImageField(upload_to='images/')
